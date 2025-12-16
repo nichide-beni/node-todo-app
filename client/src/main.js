@@ -5,4 +5,5 @@ import router from '@/router';
 
 const app = createApp(App);
 app.use(router);
+// index.htmlのidに紐付け
 app.mount('#app');

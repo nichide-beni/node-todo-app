@@ -3,12 +3,14 @@
  * TODO: 例外処理などはかなり省略しているため、prodを想定する場合ははパラメーターのガード処理などを入れること
  */
 import express from 'express';
+import cors from 'cors';
 import { open_db } from './database.js';
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(cors());
 
 let db;
 
@@ -29,11 +31,10 @@ open_db().then(database => {
 });
 
 /**
- * TODOリストを一覧で取得
+ * DBから全てのTODO情報を取得する
  */
 app.get('/todos', async (req, res) => {
   try {
-    // .all() メソッド
     const todos = await db.all('SELECT * FROM todos ORDER BY id DESC');
     res.json(todos);
   } catch (err) {
@@ -42,7 +43,7 @@ app.get('/todos', async (req, res) => {
 });
 
 /**
- * 新しいリストを作成
+ * 新しいTODOを作成
  */
 app.post('/todos', async (req, res) => {
   const { title } = req.body;
@@ -51,13 +52,13 @@ app.post('/todos', async (req, res) => {
   }
 
   try {
-    // .run() メソッド
+    // DBの追加処理
     const result = await db.run(
       'INSERT INTO todos (title, completed, created_at) VALUES (?, ?, ?)',
       [title.trim(), 0, new Date()]
     );
 
-    // lastIDを使用して挿入されたアイテムを取得
+    // 追加したDBを取得し、成功レスポンスとしてクライアントに送信
     const newTodo = await db.get('SELECT * FROM todos WHERE id = ?', result.lastID);
     res.status(200).json(newTodo);
   } catch (err) {
@@ -66,21 +67,44 @@ app.post('/todos', async (req, res) => {
 });
 
 /**
- * 選択されたTODOアイテムを削除 
+ * 選択されたTODOアイテムを編集する
+ */
+app.get('/todos/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // IDの一致したデータを編集する
+    const result = await db.run(
+      'SELECT * FROM todos WHERE id = ?',
+      [id]
+    );
+
+    const updatedTodo = await db.get('SELECT * FROM todos WHERE id = ?', id);
+    res.json(updatedTodo);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update todo' });
+  }
+});
+
+/**
+ * 選択されたTODOアイテムを編集する
  */
 app.put('/todos/:id', async (req, res) => {
   const { id } = req.params;
+  const { title } = req.body;
   const { completed } = req.body;
 
-  if (typeof completed !== 'boolean') {
+  console.log(req.body);
+
+  if (typeof completed !== 'boolean' && completed !== '0' && completed !== '1' && completed !== 0 && completed !== 1) {
     return res.status(400).json({ error: 'Completed status must be a boolean' });
   }
 
   try {
-    // .run() メソッド
+    // IDの一致したデータを編集する
     const result = await db.run(
-      'UPDATE todos SET completed = ? WHERE id = ?',
-      [completed ? 1 : 0, id]
+      'UPDATE todos SET title = ?, completed = ? WHERE id = ?',
+      [title, completed ? 1 : 0, id]
     );
 
     if (result.changes === 0) {
@@ -102,8 +126,10 @@ app.delete('/todos/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    // .run() メソッド
-    const result = await db.run('DELETE FROM todos WHERE id = ?', id);
+    const result = await db.run(
+      'UPDATE todos SET deleted_at = ? WHERE id = ?',
+      [new Date() ,id]
+    );
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Todo not found' });

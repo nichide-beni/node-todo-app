@@ -1,7 +1,9 @@
+<!-- 共通ヘッダー -->
 <template>
   <header>
     <nav class="navbar">
-      <RouterLink to="/list">TODOアプリ</RouterLink>
+      <RouterLink :to="{ name: 'TodoList' }">TODO一覧へ</RouterLink>
+      <RouterLink :to="{ name: 'TodoCreate' }">新しいTODOを作成</RouterLink>
     </nav>
   </header>
   
@@ -18,8 +20,19 @@
     background-color: #f4f4f4;
   }
   .navbar {
-    background-color: #333;
+    display: flex;
+    column-gap: 20px;
     padding: 15px 20px;
+
+    a {
+      display: inline-block;
+      padding: 15px;
+      background-color: #333;
+
+      &:nth-of-type(2) {
+        background-color: #007bff;
+      }
+    }
   }
   .navbar a {
     color: white;

@@ -21,7 +21,7 @@ cd server
 npm init -y
 volta pin node@lts
 volta pin npm@11.6.2 # 時期に依存
-npm install express sqlite sqlite3
+npm install express sqlite sqlite3 cors
 
 # gitなどから引き継いだ場合は以下を実行する
 npm install

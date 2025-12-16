@@ -37,16 +37,17 @@ export async function createTodo(title) {
 /**
  * TODOの完了状態を更新する
  * @param {number} id - TODOのID
+ * @param {string} title - TODOのタイトル
  * @param {boolean} completed - 新しい完了状態
  * @returns {Promise<Object>} 更新されたTODOアイテム
  */
-export async function updateTodoStatus(id, completed) {
+export async function updateTodo(id, title, completed) {
   const response = await fetch(`${API_BASE_URL}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ completed })
+    body: JSON.stringify({ title, completed })
   });
   if (!response.ok) {
     throw new Error('Failed to update status');
@@ -55,7 +56,7 @@ export async function updateTodoStatus(id, completed) {
 }
 
 /**
- * TODOを論理削除する (サーバーがDELETEをUPDATEとして実装していると仮定)
+ * TODOを論理削除する
  * @param {number} id - TODOのID
  * @returns {Promise<void>} 
  */
