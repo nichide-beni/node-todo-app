@@ -1,0 +1,8 @@
+
+node_modules
+vendor
+.DS_Store
+THumbs.DB
+
+/server/local_data/*
+!/server/local_data/.gitignore
