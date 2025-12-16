@@ -55,7 +55,7 @@ app.post('/todos', async (req, res) => {
     // DBの追加処理
     const result = await db.run(
       'INSERT INTO todos (title, completed, created_at) VALUES (?, ?, ?)',
-      [title.trim(), 0, new Date()]
+      [title.trim(), 0, get_datetime()]
     );
 
     // 追加したDBを取得し、成功レスポンスとしてクライアントに送信
@@ -128,7 +128,7 @@ app.delete('/todos/:id', async (req, res) => {
   try {
     const result = await db.run(
       'UPDATE todos SET deleted_at = ? WHERE id = ?',
-      [new Date() ,id]
+      [get_datetime() ,id]
     );
 
     if (result.changes === 0) {
@@ -141,3 +141,23 @@ app.delete('/todos/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete todo' });
   }
 });
+
+const zero_pad = (num, length = 2) => {
+  return String(num).padStart(length, '0');
+}
+
+const get_datetime = () => {
+  const now = new Date();
+
+  const y = now.getFullYear();
+  // 月は 0 から始まるため +1 する
+  const m = zero_pad(now.getMonth() + 1); 
+  const d = zero_pad(now.getDate());
+  
+  const h = zero_pad(now.getHours());
+  const i = zero_pad(now.getMinutes());
+  const s = zero_pad(now.getSeconds());
+
+  // 'yyyy-mm-dd hh:ii:ss' の形式で結合
+  return `${y}-${m}-${d} ${h}:${i}:${s}`;
+}

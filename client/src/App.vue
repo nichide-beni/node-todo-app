@@ -21,6 +21,7 @@
   }
   .navbar {
     display: flex;
+    justify-content: center;
     column-gap: 20px;
     padding: 15px 20px;
 

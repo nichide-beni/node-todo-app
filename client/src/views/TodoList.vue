@@ -8,6 +8,7 @@
 
     <ul v-else class="todo-list">
       <li v-for="todo in todos" :key="todo.id" :class="{ completed: todo.completed }">
+        <time class="created">{{ todo.created_at }}</time>
         <span class="title">{{ todo.title }}</span>
         <span class="actions">
           <button @click="toggleCompletedStatus(todo)" :disabled="isDeleting" class="btn-action status-btn">
@@ -28,7 +29,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
   import { fetchTodos, updateTodo, deleteTodo } from '@/controller/todoApi';
 
   // ステートの定義
@@ -126,6 +127,7 @@
     text-decoration: line-through;
     color: #888;
   }
+  time,
   .title {
     flex-grow: 1;
     margin-right: 20px;
