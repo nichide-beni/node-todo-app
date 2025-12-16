@@ -42,6 +42,7 @@ npm create vite@latest client -- --template vue
 cd client
 volta pin node@lts
 volta pin npm@11.6.2 # 時期に依存
+npm install vue-router@4
 
 # gitなどから引き継いだ場合は以下を実行する
 npm install
