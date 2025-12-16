@@ -56,9 +56,9 @@ npm install
 ```bash
 # server側を立ち上げる場合
 cd server
-npm start
+npm run start
 
 # client側を立ち上げる場合
 cd client
-npm start
+npm run dev
 ```
