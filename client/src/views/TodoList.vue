@@ -7,7 +7,7 @@
     <div v-else-if="error" class="error">エラー: {{ error.message }}</div>
 
     <ul v-else class="todo-list">
-      <li v-for="todo in todos" :key="todo.id" :class="{ completed: todo.completed }">
+      <li v-for="todo in activeTodos" :key="todo.id" :class="{ completed: todo.completed }">
         <time class="created">{{ todo.created_at }}</time>
         <span class="title">{{ todo.title }}</span>
         <span class="actions">
@@ -95,6 +95,10 @@
 
   // コンポーネントがマウントされたらデータをロード
   onMounted(loadTodos);
+
+  const activeTodos = computed(() => {
+    return todos.value.filter((todoItem) => !todoItem.deleted_at);
+  });
 </script>
 
 <style scoped>
